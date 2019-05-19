@@ -54,7 +54,7 @@ opts = [{'label' : i, 'value' : i} for i in data.event_type.unique()]
 app.layout = html.Div([
     ############################
     # CONTROLS
-    html.Div([html.H1(children='Fatalities Trough Terror'),
+    html.Div([html.H1(children='Terror X Africa'),
                   html.Div([
                   html.Div([
                       dcc.Graph(
@@ -94,21 +94,21 @@ app.layout = html.Div([
                                     'margin':{'t': 40}
                                     }
                 ),
-            html.Br(),
-            html.Label('Fatalities'),
-            dcc.Slider(
-                id='Fatalities',
-                min=0,
-                max=100,
-                value=20.0,
-                step=1,
-                #marks={str(h) : {'label' : str(h), 'style':{'color':'red'} for h in range(0, 24)},
-                marks={
-                    '0': '0',
-                    '50': '50',
-                    '100': '100'
-                }
-            )
+            #html.Br()#,
+            # html.Label('Fatalities'),
+            # dcc.Slider(
+            #     id='Fatalities',
+            #     min=0,
+            #     max=100,
+            #     value=20.0,
+            #     step=1,
+            #     #marks={str(h) : {'label' : str(h), 'style':{'color':'red'} for h in range(0, 24)},
+            #     marks={
+            #         '0': '0',
+            #         '50': '50',
+            #         '100': '100'
+            #     }
+            # )
 
         ],
         style={'height': '10%',
@@ -185,7 +185,7 @@ html.Br(),
 
 @app.callback(
     dash.dependencies.Output('distance-simulation', 'figure'),
-    [dash.dependencies.Input('Fatalities', 'value'),
+    [#dash.dependencies.Input('Fatalities', 'value'),
      dash.dependencies.Input('opt', 'value'),
      dash.dependencies.Input('yearSlider', 'value')
      # dash.dependencies.Input('year_slider', 'value'),
@@ -193,9 +193,10 @@ html.Br(),
 )
 
 
-def update_simulation(Fatalities, opt,yearSlider):
+#def update_simulation(Fatalities, opt,yearSlider):
+def update_simulation(opt,yearSlider):
 
-    Fatalities=float(Fatalities)
+    #Fatalities=float(Fatalities)
 
     # df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_february_us_airport_traffic.csv')
     # df.head()
@@ -236,7 +237,7 @@ def update_simulation(Fatalities, opt,yearSlider):
                 color=df["fatalities"],
                 cmax=df["fatalities"].max(),
                 colorbar=dict(
-                    title="Fatalities through Terror"
+                    title="Terror X Africa"
                 )
             ))],
         'layout':  go.Layout(
@@ -258,17 +259,17 @@ def update_simulation(Fatalities, opt,yearSlider):
 
 @app.callback(
     dash.dependencies.Output('time', 'figure'),
-    [dash.dependencies.Input('Fatalities', 'value'),
+    [#dash.dependencies.Input('Fatalities', 'value'),
      dash.dependencies.Input('yearSlider', 'value')
      # dash.dependencies.Input('year_slider', 'value'),
      ]
 )
 
-def update_time(Fatalities, yearSlider):
+def update_time( yearSlider):
 
     df = data[data['year'] == int(yearSlider)]
     #df = df[df.event_type == opt[1]]
-    Fatalities=float(Fatalities)
+    #Fatalities=float(Fatalities)
 
 
     #data = pd.read_csv('data/TerrorAfricaTime.csv')
@@ -372,14 +373,14 @@ def update_time(Fatalities, yearSlider):
 
 @app.callback(
     dash.dependencies.Output('contour-of-distance', 'figure'),
-     [dash.dependencies.Input('Fatalities', 'value'),
+     [#[dash.dependencies.Input('Fatalities', 'value'),
 
      dash.dependencies.Input('yearSlider', 'value')
      ])
-def update_graph(Fatalities, yearSlider):
+def update_graph(yearSlider):
     df = data[data['year'] == int(yearSlider)]
 
-    Fatalities=float(Fatalities)
+    #Fatalities=float(Fatalities)
 
 
 
