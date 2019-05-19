@@ -240,7 +240,7 @@ def update_simulation(Fatalities, opt,yearSlider):
                 )
             ))],
         'layout':  go.Layout(
-            title='Fatalities through Terror<br>(Hover for info)',
+            #title='Fatalities through Terror<br>(Hover for info)',
                 height=900,
                 width=1000,
             geo=dict(
