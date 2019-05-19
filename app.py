@@ -30,6 +30,8 @@ app = dash.Dash(
 )
 
 app.title = "Fatalities trough Terror"
+#app.config.requests_pathname_prefix = app.config.routes_pathname_prefix.split('/')[-1]
+
 
 # app.config.update({
 # as the proxy server will remove the prefix
@@ -43,8 +45,8 @@ app.title = "Fatalities trough Terror"
 
 server = app.server
 
-# app.css.config.serve_locally = True
-# app.scripts.config.serve_locally = True
+app.css.config.serve_locally = True
+app.scripts.config.serve_locally = True
 data = pd.read_csv('./data/TerrorAfricaTime.csv')
 #opts = [{'label' : i, 'value' : i} for i in features]
 
@@ -63,11 +65,11 @@ app.layout = html.Div([
                            # figure=figure,
                            id='time'
                        ),
-                       html.Div(dcc.Slider(
+                       html.Div(dcc.RangeSlider(
         id='yearSlider',
         min=data['year'].min(),
         max=data['year'].max(),
-        value=data['year'].max(),
+        value=data['year'].unique(),#data['year'].max(),
         marks={str(year): str(year) for year in data['year'].unique()}
     ), style={'width': '49%', 'padding': '0px 20px 20px 20px'}),
             #             html.Br(),
@@ -188,6 +190,20 @@ app.layout = html.Div([
                }
     ),
 html.Br(),
+# html.Div(DataTable(rows=[{}]), style={'display': 'none'})
+# html.Div([
+#     dash_table.DataTable(
+#         id='highscore',
+#         columns=[{"name": i, "id": i, 'deletable': True} for i in data.fatalities],
+#         editable=True,
+#         n_fixed_columns=2,
+#         style_table={'maxWidth': '1500px'},
+#         row_selectable="multi",
+#         selected_rows=[0],
+#         style_cell = {"fontFamily": "Arial", "size": 10, 'textAlign': 'left'}
+#         )
+#     ]),# className=" twelve columns"),
+    html.Br(),
         #####################################
         # Graphics
         html.Div([
@@ -233,8 +249,8 @@ def update_simulation(Length, Strike, Dip, opt,yearSlider):
     scl=[[0, "rgb(5, 10, 172)"], [0.35, "rgb(40, 60, 190)"], [0.5, "rgb(70, 100, 245)"],
            [0.6, "rgb(90, 120, 245)"], [0.7, "rgb(106, 137, 247)"], [1, "rgb(220, 220, 220)"]]
 
-    df=pd.read_csv('./data/TerrorAfrica.csv')
-    df = df[df['year'] == int(yearSlider)]
+
+    df = data[data['year'] == int(yearSlider[0])]
     df = df[df.fatalities!=0]
 
     df = df[0:1000]
@@ -287,11 +303,13 @@ def update_simulation(Length, Strike, Dip, opt,yearSlider):
     [dash.dependencies.Input('Length', 'value'),
      dash.dependencies.Input('Strike', 'value'),
      dash.dependencies.Input('Dip', 'value'),
+     dash.dependencies.Input('yearSlider', 'value')
      # dash.dependencies.Input('year_slider', 'value'),
      ]
 )
 
-def update_time(Length, Strike, Dip):
+def update_time(Length, Strike, Dip, yearSlider):
+    df = data[data['year'] == int(yearSlider[0])]
 
     Length=float(Length)
     Strike=np.deg2rad(float(Strike))
@@ -314,6 +332,7 @@ def update_time(Length, Strike, Dip):
     fig['layout'].update(
         title='From 1991 to 2019',
         yaxis=dict(
+            title="fatalities",
             range=[0, 1500],
             autorange=False,
             showgrid=True,
@@ -323,6 +342,7 @@ def update_time(Length, Strike, Dip):
             showticklabels=True
             ),
         xaxis=dict(
+            title="time",
             rangeselector=dict(
                 buttons=list([
                     dict(count=1,
@@ -404,14 +424,23 @@ def update_time(Length, Strike, Dip):
     # return fig
 # Step 5. Add callback functions
 
+# @app.callback(Output('highscore', 'data'),
+# 	[dash.dependencies.Input('yearSlider', 'value')
+#     ])
+# def update_table(yearSlider):
+#     df = df[df['year'] == int(yearSlider)]
+#     return df
+
 @app.callback(
     dash.dependencies.Output('contour-of-distance', 'figure'),
      [dash.dependencies.Input('Length', 'value'),
      dash.dependencies.Input('Strike', 'value'),
      dash.dependencies.Input('Dip', 'value'),
+     dash.dependencies.Input('yearSlider', 'value')
      ])
 # def update_graph(EVENTLAT,EVENTLON,EQDEPTH,Width,DeltaW,Length,DeltaL,Strike,Dip):
-def update_graph(Length, Strike, Dip):
+def update_graph(Length, Strike, Dip,yearSlider):
+    df = data[data['year'] == int(yearSlider[0])]
 
     Length=float(Length)
 
@@ -443,19 +472,19 @@ def update_graph(Length, Strike, Dip):
     autoContour=False
 
     trace0=go.Histogram(
-        x=data.fatalities,
-        nbinsx = 4
+        x=df.fatalities,
+        nbinsx = 100
     )
 
-    trace1=go.Histogram(
-        x=data.fatalities,
-        nbinsx = 40
-    )
-
-    trace2=go.Histogram(
-        x=data.fatalities,
-        nbinsx = 400
-    )
+    # trace1=go.Histogram(
+    #     x=data.fatalities,
+    #     nbinsx = 40
+    # )
+    #
+    # trace2=go.Histogram(
+    #     x=data.fatalities,
+    #     nbinsx = 400
+    # )
 
 
     fig=plotly.tools.make_subplots(
@@ -475,9 +504,18 @@ def update_graph(Length, Strike, Dip):
     #fig.append_trace(trace2, 3, 1)
 
     fig['layout'].update(
+    xaxis=dict(
+        title="fatalities",
+        #type='log',
+        autorange=True
+    ),
+    yaxis=dict(
+        title="frequency",
+        type='log',
+        autorange=True
+    ),
         height=400,
         width=500,
-        title='additional plots',
         autosize=False,
         scene=dict(
             aspectmode="data"
