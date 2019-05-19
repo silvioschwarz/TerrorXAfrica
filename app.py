@@ -23,7 +23,7 @@ external_css = ["css/style.css",
                 "https://fonts.googleapis.com/css?family=Product+Sans:400,400i,700,700i"]
 
 app = dash.Dash(
-    name='earthquake-distances-app',
+    name='TerrorXAfrica',
     #    sharing=True,
     #    url_base_pathname='/earthquake-distances',
     external_stylesheets=external_css
@@ -48,138 +48,65 @@ server = app.server
 app.css.config.serve_locally = True
 app.scripts.config.serve_locally = True
 data = pd.read_csv('./data/TerrorAfricaTime.csv')
-#opts = [{'label' : i, 'value' : i} for i in features]
+opts = [{'label' : i, 'value' : i} for i in data.event_type.unique()]
+#opts[0]['all'] = 'all'
 
 app.layout = html.Div([
     ############################
     # CONTROLS
     html.Div([html.H1(children='Fatalities Trough Terror'),
                   html.Div([
+                  html.Div([
                       dcc.Graph(
                           # figure=figure,
                           id='distance-simulation'
-                      ),
-                       #html.Br(),
-                       #html.Label('From 2007 to 2017'),
-                       dcc.Graph(
-                           # figure=figure,
-                           id='time'
-                       ),
-                       html.Div(dcc.RangeSlider(
-        id='yearSlider',
-        min=data['year'].min(),
-        max=data['year'].max(),
-        value=data['year'].unique(),#data['year'].max(),
-        marks={str(year): str(year) for year in data['year'].unique()}
-    ), style={'width': '49%', 'padding': '0px 20px 20px 20px'}),
-            #             html.Br(),
-            # html.Label('From 2007 to 2017'),
-            # dcc.RangeSlider(
-            #     id='year_slider',
-            #     min=1991,
-            #     max=2020,
-            #     value=[1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010,2011,2012,2013,2014,2015,2016,2017,2018,2019,2020],
-            #     marks={
-            #         '1991': '1991',
-            #         '1992': '1992',
-            #         '1993': '1993',
-            #         '1994': '1994',
-            #         '1995': '1995',
-            #         '1996': '1996',
-            #         '1997': '1997',
-            #         '1998': '1998',
-            #         '1999': '1999',
-            #         '2000': '2000',
-            #         '2001': '2001',
-            #         '2002': '2002',
-            #         '2003': '2003',
-            #         '2004': '2004',
-            #         '2005': '2005',
-            #         '2006': '2006',
-            #         '2007': '2007',
-            #         '2008': '2008',
-            #         '2009': '2009',
-            #         '2010': '2010',
-            #         '2011': '2011',
-            #         '2012': '2012',
-            #         '2013': '2013',
-            #         '2014': '2014',
-            #         '2015': '2015',
-            #         '2016': '2016',
-            #         '2017': '2017',
-            #         '2018': '2018',
-            #         '2019': '2019',
-            #         '2020': '2020'
-            #     }
-            # )
+                      )],
+                      style={'width': '99%',
+                           'padding': '0px 0px 0px 0px',
+                           'display': 'inline-block',
+                           'margin':{'t': 0}
+                           })
                   ],
                       style={
+                      "margin":{'t': 0},
                       'display': 'inline-block',
-                          'width': '68%'
+                          'width': '38%'
                   }
                   ),
         html.Div([
         html.Div([
         # dropdown
                 html.P([
-                    html.Label("Choose a feature"),
+                    html.Label("Choose type of violence"),
                     dcc.Dropdown(id = 'opt',
-                                 options=[
-                                    {'label': 'New York City', 'value': 'NYC'},
-                                    {'label': 'Montreal', 'value': 'MTL'},
-                                    {'label': 'San Francisco', 'value': 'SF'}
-                                    ],
-                                 value='NYC'
+                                 options=opts,
+                                 #[
+                                    # {'label': 'New York City', 'value': 'NYC'},
+                                    # {'label': 'Montreal', 'value': 'MTL'},
+                                    # {'label': 'San Francisco', 'value': 'SF'}
+                                    # ],
+                                 value='Violence against civilians'
                                  )
                         ], style = {'width': '400px',
                                     'fontSize' : '20px',
-                                    'padding-left' : '100px',
-                                    'display': 'inline-block'
+                                    'padding-left' : '50px',
+                                    'display': 'inline-block',
+                                    'margin':{'t': 40}
                                     }
                 ),
             html.Br(),
-            html.Label('Length'),
+            html.Label('Fatalities'),
             dcc.Slider(
-                id='Length',
+                id='Fatalities',
                 min=0,
                 max=100,
                 value=20.0,
                 step=1,
+                #marks={str(h) : {'label' : str(h), 'style':{'color':'red'} for h in range(0, 24)},
                 marks={
                     '0': '0',
                     '50': '50',
                     '100': '100'
-                }
-            ),
-            #html.Br(),
-            html.Label('Strike'),
-            dcc.Slider(
-                id='Strike',
-                min=0,
-                max=360,
-                value=10.0,
-                step=1,
-                marks={
-                    '0': '0',
-                    '90': '90',
-                    '180': '180',
-                    '270': '270',
-                    '360': '360'
-                }
-            ),
-            #html.Br(),
-            html.Label('Dip'),
-            dcc.Slider(
-                id='Dip',
-                min=0,
-                max=90,
-                value=45,
-                step=1,
-                marks={
-                    '0': '0',
-                    '30': '30',
-                    '60': '60',
-                    '90': '90'
                 }
             )
 
@@ -189,6 +116,30 @@ app.layout = html.Div([
                'display': 'inline-block'
                }
     ),
+     html.Br(),
+      html.Br(),
+   html.Div([
+      dcc.Graph(
+          # figure=figure,
+          id='time'
+      )],
+      style={'width': '99%',
+           #'padding': '0px 0px 0px 0px',
+           #'display': 'inline-block',
+           'margin':{'t': 40}
+           }),
+      html.Div(dcc.Slider(
+           id='yearSlider',
+           min=data['year'].min(),
+           max=data['year'].max(),
+           value=data['year'].max(),
+           marks={str(year): str(year) for year in data['year'].unique()}
+           ),
+       style={'width': '99%',
+            'padding': '0px 10px 0px 40px',
+            'display': 'inline-block',
+            'margin':{'t': 40}
+            }),
 html.Br(),
 # html.Div(DataTable(rows=[{}]), style={'display': 'none'})
 # html.Div([
@@ -211,25 +162,30 @@ html.Br(),
                 id='contour-of-distance'
             )
         ],
-            style={
+            style={'float': 'left',
+                    "margin":{'t': 40},
                    'display': 'inline-block',
-                   'width': '39%'
+                   'width': '49%'
                    }
         )],
-    style={#'float': 'left',
+    style={'float': 'right',
             'height': '10%',
-           'width': '19%',
+           'width': '39%',
            'display': 'inline-block'
            }
-    )]
-    )]
+    )],style={
+            #"margin":{'t': 0},
+             'display': 'inline-block'
+           }
+    )],style={
+            #"margin":{'t': 0},
+             'display': 'inline-block'
+           }
     )
 
 @app.callback(
     dash.dependencies.Output('distance-simulation', 'figure'),
-    [dash.dependencies.Input('Length', 'value'),
-     dash.dependencies.Input('Strike', 'value'),
-     dash.dependencies.Input('Dip', 'value'),
+    [dash.dependencies.Input('Fatalities', 'value'),
      dash.dependencies.Input('opt', 'value'),
      dash.dependencies.Input('yearSlider', 'value')
      # dash.dependencies.Input('year_slider', 'value'),
@@ -237,23 +193,25 @@ html.Br(),
 )
 
 
-def update_simulation(Length, Strike, Dip, opt,yearSlider):
+def update_simulation(Fatalities, opt,yearSlider):
 
-    Length=float(Length)
-    Strike=np.deg2rad(float(Strike))
-    Dip=np.deg2rad(float(Dip))
+    Fatalities=float(Fatalities)
 
     # df = pd.read_csv('https://raw.githubusercontent.com/plotly/datasets/master/2011_february_us_airport_traffic.csv')
     # df.head()
 
-    scl=[[0, "rgb(5, 10, 172)"], [0.35, "rgb(40, 60, 190)"], [0.5, "rgb(70, 100, 245)"],
-           [0.6, "rgb(90, 120, 245)"], [0.7, "rgb(106, 137, 247)"], [1, "rgb(220, 220, 220)"]]
+    scl=[[0, "rgb(172, 10, 5)"], [0.35, "rgb(190, 60, 40)"], [0.5, "rgb(245, 100, 70)"],
+           [0.6, "rgb(245, 120, 90)"], [0.7, "rgb(247, 137, 106)"], [1, "rgb(255, 220, 220)"]]
 
 
-    df = data[data['year'] == int(yearSlider[0])]
-    df = df[df.fatalities!=0]
+    df = data[data['year'] == int(yearSlider)]
+    if opt =="all":
+        df = df
+    else:
+        df = df[df.event_type == opt]
+    #df = df[df.fatalities!=0]
 
-    df = df[0:1000]
+    df = df[0:2000]
     #df = df[df.event_date in year_slider]
 
     return{
@@ -264,7 +222,7 @@ def update_simulation(Length, Strike, Dip, opt,yearSlider):
             text=df["text"],
             mode='markers',
             marker=dict(
-                size=df["fatalities"]/10,
+                size=np.log(df["fatalities"]+1)*10,
                 opacity=0.8,
                 reversescale=True,
                 autocolorscale=False,
@@ -282,14 +240,14 @@ def update_simulation(Length, Strike, Dip, opt,yearSlider):
                 )
             ))],
         'layout':  go.Layout(
-            title='Fatalities through Terror<br>(Hover for airport names)',
-                height=550,
-                width=1200,
+            title='Fatalities through Terror<br>(Hover for info)',
+                height=900,
+                width=1000,
             geo=dict(
                 scope='africa',
                 projection=dict(type='mercator'),
                 showland=True,
-                landcolor="rgb(250, 250, 250)",
+                landcolor="rgb(180,180,180)",
                 subunitcolor="rgb(217, 217, 217)",
                 countrycolor="rgb(217, 217, 217)",
                 countrywidth=0.5,
@@ -300,37 +258,38 @@ def update_simulation(Length, Strike, Dip, opt,yearSlider):
 
 @app.callback(
     dash.dependencies.Output('time', 'figure'),
-    [dash.dependencies.Input('Length', 'value'),
-     dash.dependencies.Input('Strike', 'value'),
-     dash.dependencies.Input('Dip', 'value'),
+    [dash.dependencies.Input('Fatalities', 'value'),
      dash.dependencies.Input('yearSlider', 'value')
      # dash.dependencies.Input('year_slider', 'value'),
      ]
 )
 
-def update_time(Length, Strike, Dip, yearSlider):
-    df = data[data['year'] == int(yearSlider[0])]
+def update_time(Fatalities, yearSlider):
 
-    Length=float(Length)
-    Strike=np.deg2rad(float(Strike))
-    Dip=np.deg2rad(float(Dip))
+    df = data[data['year'] == int(yearSlider)]
+    #df = df[df.event_type == opt[1]]
+    Fatalities=float(Fatalities)
+
 
     #data = pd.read_csv('data/TerrorAfricaTime.csv')
     trace = go.Scatter(x=data.event_date,
-                    y=data.fatalities)
+                    y=data.fatalities,
+                    line=dict(
+                        color='rgb(172, 10, 5)')
+                        )
 
     fig=plotly.tools.make_subplots(
         rows=1,
         cols=1,
-        horizontal_spacing=0.1,
-        vertical_spacing=0.1,
+        #horizontal_spacing=0.1,
+        #vertical_spacing=0.1,
     )
 
     fig.append_trace(trace, 1, 1)
 
 
     fig['layout'].update(
-        title='From 1991 to 2019',
+        title="",#'From 1991 to 2019',
         yaxis=dict(
             title="fatalities",
             range=[0, 1500],
@@ -343,38 +302,18 @@ def update_time(Length, Strike, Dip, yearSlider):
             ),
         xaxis=dict(
             title="time",
-            rangeselector=dict(
-                buttons=list([
-                    dict(count=1,
-                        label='1m',
-                        step='month',
-                        stepmode='backward'),
-                    dict(count=6,
-                        label='6m',
-                        step='month',
-                        stepmode='backward'),
-                    dict(count=1,
-                        label='YTD',
-                        step='year',
-                        stepmode='todate'),
-                    dict(count=1,
-                        label='1y',
-                        step='year',
-                        stepmode='backward'),
-                    dict(step='all')
-                    ])
-            ),
             rangeslider=dict(
                 visible = True
                 ),
             type='date'
             ),
-        height=300,
-        width=1200,
+        height=200,
+        width=800,
         autosize=False,
         scene=dict(
             aspectmode="data"
-        )
+        ),
+        margin={'t':10}
     )
 
     return fig
@@ -433,19 +372,16 @@ def update_time(Length, Strike, Dip, yearSlider):
 
 @app.callback(
     dash.dependencies.Output('contour-of-distance', 'figure'),
-     [dash.dependencies.Input('Length', 'value'),
-     dash.dependencies.Input('Strike', 'value'),
-     dash.dependencies.Input('Dip', 'value'),
+     [dash.dependencies.Input('Fatalities', 'value'),
+
      dash.dependencies.Input('yearSlider', 'value')
      ])
-# def update_graph(EVENTLAT,EVENTLON,EQDEPTH,Width,DeltaW,Length,DeltaL,Strike,Dip):
-def update_graph(Length, Strike, Dip,yearSlider):
-    df = data[data['year'] == int(yearSlider[0])]
+def update_graph(Fatalities, yearSlider):
+    df = data[data['year'] == int(yearSlider)]
 
-    Length=float(Length)
+    Fatalities=float(Fatalities)
 
-    Strike=float(Strike)
-    Dip=float(Dip)
+
 
     contoursDict=dict(start=0,
                         end=70,
@@ -473,6 +409,8 @@ def update_graph(Length, Strike, Dip,yearSlider):
 
     trace0=go.Histogram(
         x=df.fatalities,
+        marker=dict(
+            color='rgb(172, 10, 5)'),
         nbinsx = 100
     )
 
@@ -515,7 +453,7 @@ def update_graph(Length, Strike, Dip,yearSlider):
         autorange=True
     ),
         height=400,
-        width=500,
+        width=800,
         autosize=False,
         scene=dict(
             aspectmode="data"
