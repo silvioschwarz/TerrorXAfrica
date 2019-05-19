@@ -1,3 +1,5 @@
 # Terror X Africa
 
-![eqd](img/thumbnail(1).png)
+## Fighting terrorism through the means of data science!
+
+![eqd](/img/thumbnail.png)

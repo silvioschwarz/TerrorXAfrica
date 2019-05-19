@@ -237,7 +237,7 @@ def update_simulation(opt,yearSlider):
                 color=df["fatalities"],
                 cmax=df["fatalities"].max(),
                 colorbar=dict(
-                    title="Terror X Africa"
+                    title="fatalities"
                 )
             ))],
         'layout':  go.Layout(
